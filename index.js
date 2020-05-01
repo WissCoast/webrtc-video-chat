@@ -1,8 +1,17 @@
 require('dotenv').config();
-const app = require("express")();
+const express = require("express");
+const app = express();
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const [rooms, roomMap] = [{}, {}];
+const path = require("path")
+
+if(process.env.PROD) {
+    app.use(express.static(path.join(__dirname, './frontend/build')))
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, './frontend/build/index.html'))
+    })
+}
 
 io.on('connection', socket => {
     console.log("connection")
